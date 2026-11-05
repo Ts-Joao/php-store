@@ -25,7 +25,7 @@ function create_product($name, $price, $amount) {
   }
 }
 
-function get_all_products() {
+function get_all_products($name = '') {
   global $connection;
   
   if (!$connection) {
@@ -33,10 +33,12 @@ function get_all_products() {
   }
 
   try {
-    $sql = "SELECT* FROM products";
-    $stmt = $connection->query($sql);
+    $sql = "SELECT* FROM products WHERE name LIKE '%:name%'";
+    $stmt = $connection->prepare($sql);
   
-    $products = $stmt->fetchAll();
+    $products = $stmt->execute([
+      'name' => $name
+    ]);
   
     return $products;
 
