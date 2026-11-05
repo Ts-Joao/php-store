@@ -20,7 +20,92 @@ function create_product($name, $price, $amount) {
   
     return $result;
 
-  } catch (PDOExecption $e) {
+  } catch (PDOException $e) {
+    return false;
+  }
+}
+
+function get_all_products() {
+  global $connection;
+  
+  if (!$connection) {
+    return [];
+  }
+
+  try {
+    $sql = "SELECT* FROM products";
+    $stmt = $connection->query($sql);
+  
+    $products = $stmt->fetchAll();
+  
+    return $products;
+
+  } catch (PDOException $e) {
+    return [];
+  }
+}
+
+function find_product_by_id($id) {
+  global $connection;
+
+  if (!$connection) {
+    return false;
+  }
+
+  try {
+    $sql = "SELECT * FROM products WHERE id = :id";
+    $stmt = $connection->prepare($sql);
+    $result = $stmt->execute([
+      'id' => $id
+    ]);
+
+    return $result;
+    
+  } catch (PDOException $e) {
+    return false;
+  }
+}
+
+function update_product($id, $name, $price, $amount) {
+  global $connection;
+
+  if (!$connection) {
+    return false;
+  }
+
+  try {
+    $sql = "UPDATE products SET name = :name, price = :price, amount = :amount WHERE id = : id";
+    $stmt = $connection->prepare($sql);
+
+    $result = $stmt->execute([
+      'id'      => $id,
+      'name'    => $name,
+      'price'   => $price,
+      'amount'  => $amount,
+    ]);
+
+    return $result;
+    
+  } catch (PDOException $e) {
+    return false;
+  }
+}
+
+function delete_product($id) {
+  global $connection;
+
+  if (!$connection) {
+    return false;
+  }
+
+  try {
+    $sql = "DELETE * FROM products WHERE id = :id";
+    $stmt = $connection->prepare($sql);
+
+    $result = $stmt->execute([
+      'id' => $id
+    ]);
+  } catch (PDOException $e) {
     return false;
   }
 }
