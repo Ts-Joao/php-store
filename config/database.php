@@ -13,7 +13,7 @@ $options = [
 ];
 
 try {
-  $conexao = new PDO($dsn, $user, $password, $options);
+  $connection = new PDO($dsn, $user, $password, $options);
 } catch (PDOException $e) {
-  $conexao = false;
+  $connection = false;
 }
