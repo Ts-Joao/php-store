@@ -25,7 +25,7 @@ function create_product($name, $price, $amount) {
   }
 }
 
-function get_all_products($name = '') {
+function find_all_products($name = '') {
   global $connection;
   
   if (!$connection) {
@@ -76,6 +76,8 @@ function update_product($id, $name, $price, $amount) {
   }
 
   try {
+    find_product_by_id($id);
+
     $sql = "UPDATE products SET name = :name, price = :price, amount = :amount WHERE id = : id";
     $stmt = $connection->prepare($sql);
 
