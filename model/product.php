@@ -9,13 +9,14 @@ function create_product($name, $price, $amount) {
   }
 
   try {
-    $sql = "INSERT INTO products (name, price, amount) VALUES (:name, :price, :amount)";
+    $sql = "INSERT INTO products (name, description, price, quantity) VALUES (:name, :description, :price, :quantity)";
     $stmt = $connection->prepare($sql);
   
     $result = $stmt->execute([
-      'name'    => $name,
-      'price'   => $price,
-      'amount'  => $amount
+      'name'        => $name,
+      'description' => $description,
+      'price'       => $price,
+      'quantity'    => $quantity
     ]);
   
     return $result;
