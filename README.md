@@ -1,14 +1,15 @@
 # 🗺️ Roadmap de Desenvolvimento: CRUD de Produtos em PHP (PDO + MVC)
 
-Roadmap prático para guiar a continuidade do desenvolvimento do sistema de gerenciamento de produtos com rastreamento automático de auditoria via Trigger no MySQL.
+Roadmap do sistema de gerenciamento de produtos com rastreamento automático de auditoria via Trigger no MySQL.
 
 ---
 
 ## 🧭 Visão Geral do Projeto
 
 * **Arquitetura**: MVC simplificado (Model-View-Controller) com roteamento via Front Controller.
-* **Tecnologias**: PHP 8.x + PDO, MySQL, HTML5 / CSS3 (Bootstrap 5).
+* **Tecnologias**: PHP 8.x + PDO, MySQL, HTML5 / CSS3 (Bootstrap 5.3 + Bootstrap Icons).
 * **Banco de Dados**: Configurado no arquivo [`schema.sql`](file:///c:/Users/Admin/development/php-store/schema.sql) (tabelas `produtos`, `historico_alteracoes` e trigger `trg_produto_update`).
+* **Status do Projeto**: 🚀 **Desenvolvimento Concluído (Fases 1 a 5 finalizadas; Pronto para Testes/Validação)**
 
 ---
 
@@ -23,14 +24,17 @@ php-store/
 │   └── database.php           # Configuração da conexão PDO com o MySQL
 │
 ├── model/
-│   └── product.php            # Funções de persistência no banco (Prepared Statements)
+│   └── product.php            # Funções de persistência no banco (Prepared Statements e CRUD)
 │
 ├── controller/
-│   └── productController.php  # Lógica de controle, validações e redirecionamentos
+│   └── productController.php  # Lógica de controle, validações e alertas via JavaScript
 │
 ├── view/
+│   ├── layout/
+│   │   ├── header.php         # Cabeçalho global, Bootstrap 5.3 e Navbar
+│   │   └── footer.php         # Rodapé global e scripts JS do Bootstrap
 │   ├── home.php               # Dashboard / Apresentação inicial
-│   ├── listProducts.php       # Tabela de listagem com botões Editar e Excluir
+│   ├── listProducts.php       # Tabela de listagem com busca e botões Editar e Excluir
 │   ├── addNewProduct.php      # Formulário de cadastro de novo produto
 │   ├── editProduct.php        # Formulário preenchido para edição
 │   └── history.php            # Tela de visualização do log gravado pela Trigger
@@ -42,123 +46,116 @@ php-store/
 
 ---
 
-## 📍 Fases do Roadmap
+## 📍 Progresso do Roadmap
 
 ```
-  Fase 1: Conexão (config) 
+  [x] Fase 1: Conexão PDO (config)
            │
            ▼
-  Fase 2: Modelo de Dados (model)
+  [x] Fase 2: Modelo de Dados (model)
            │
            ▼
-  Fase 3: Roteamento (index.php)
+  [x] Fase 3: Roteamento (index.php)
            │
            ▼
-  Fase 4: Controlador (controller)
+  [x] Fase 4: Controlador (controller)
            │
            ▼
-  Fase 5: Interface do Usuário (view)
+  [x] Fase 5: Interface do Usuário (view)
            │
            ▼
-  Fase 6: Testes & Validação da Trigger
+  [ ] Fase 6: Testes & Validação da Trigger
 ```
 
 ---
 
-### 🔹 Fase 1: Configuração da Conexão PDO
-**Arquivo alvo**: [`config/database.php`](file:///c:/Users/Admin/development/php-store/config/database.php)
+### ✅ Fase 1: Configuração da Conexão PDO
+**Arquivo**: [`config/database.php`](file:///c:/Users/Admin/development/php-store/config/database.php)
 
-* [ ] Corrigir o DSN e constantes do PDO:
-  * Ajustar charset para `utf8mb4` (corrigir typo `urf8mb4`).
-  * Corrigir atributo `PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION` (corrigir `ATTER_ERRMODE`).
-  * Definir `PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC`.
-  * Definir `PDO::ATTR_EMULATE_PREPARES => false`.
-* [ ] Centralizar o retorno de uma instância PDO reutilizável (função `get_connection()` ou variável `$connection`).
-* [ ] Tratar exceções (`PDOException`) exibindo mensagens seguras de erro.
-
----
-
-### 🔹 Fase 2: Camada de Dados (Model)
-**Arquivo alvo**: [`model/product.php`](file:///c:/Users/Admin/development/php-store/model/product.php)
-
-* [ ] Ajustar nomes de tabelas e colunas conforme os requisitos (tabela `produtos`, campos `nome`, `descricao`, `preco`, `quantidade`).
-* [ ] Implementar funções com *Prepared Statements* seguros:
-  * [ ] `create_product($nome, $descricao, $preco, $quantidade)`: Insere produto via `INSERT INTO produtos (...) VALUES (...)`.
-  * [ ] `find_all_products($termo = '')`: Consulta produtos ordenados por ID decrescente (corrigir sintaxe do `LIKE` com parâmetros nomeados).
-  * [ ] `find_product_by_id($id)`: Retorna os dados de um produto pelo ID.
-  * [ ] `update_product($id, $nome, $descricao, $preco, $quantidade)`: Atualiza os dados de um produto existente (operação que aciona a Trigger).
-  * [ ] `delete_product($id)`: Remove produto via `DELETE FROM produtos WHERE id = :id` (corrigir sintaxe removendo asterisco).
-  * [ ] `get_product_history($id_produto = null)`: Consulta os registros de auditoria em `historico_alteracoes`.
+* [x] DSN configurado com `charset=utf8mb4`.
+* [x] Atributos do PDO definidos:
+  * [x] `PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION`.
+  * [x] `PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC`.
+  * [x] `PDO::ATTR_EMULATE_PREPARES => false`.
+* [x] Conexão PDO instanciada na variável `$connection`.
+* [x] Tratamento de exceções com `try/catch` para `PDOException`.
 
 ---
 
-### 🔹 Fase 3: Roteamento Principal (Front Controller)
-**Arquivo alvo**: [`index.php`](file:///c:/Users/Admin/development/php-store/index.php)
+### ✅ Fase 2: Camada de Dados (Model)
+**Arquivo**: [`model/product.php`](file:///c:/Users/Admin/development/php-store/model/product.php)
 
-* [ ] Configurar `index.php` como roteador central da aplicação.
-* [ ] Capturar a ação solicitada via URL (ex: `index.php?action=create`, `?action=edit&id=1`, `?action=delete&id=1`, `?action=history`).
-* [ ] Chamar a respectiva função do `productController.php` com base na rota informada.
-* [ ] Definir a listagem de produtos (`list`) ou a home como rota padrão (`default`).
-
----
-
-### 🔹 Fase 4: Lógica de Controle (Controller)
-**Arquivo alvo**: [`controller/productController.php`](file:///c:/Users/Admin/development/php-store/controller/productController.php)
-
-* [ ] Importar o Model correto ([`model/product.php`](file:///c:/Users/Admin/development/php-store/model/product.php)).
-* [ ] Implementar as ações do controlador:
-  * [ ] `controller_list()`: Busca produtos no Model e inclui `view/listProducts.php`.
-  * [ ] `controller_create()`:
-    * Se for requisição `GET`: exibe o formulário `view/addNewProduct.php`.
-    * Se for requisição `POST`: valida campos obrigatórios, chama `create_product()`, define mensagem flash e redireciona.
-  * [ ] `controller_edit($id)`:
-    * Se for requisição `GET`: busca produto pelo ID e exibe `view/editProduct.php`.
-    * Se for requisição `POST`: valida dados, chama `update_product()`, define mensagem flash e redireciona.
-  * [ ] `controller_delete($id)`: Valida ID, executa `delete_product()` e redireciona para a listagem.
-  * [ ] `controller_history()`: Busca o histórico de alterações e carrega `view/history.php`.
+* [x] Tabela e campos padronizados (`produtos`: `nome`, `descricao`, `preco`, `quantidade`).
+* [x] Funções implementadas com *Prepared Statements* seguros:
+  * [x] `create_product($nome, $descricao, $preco, $quantidade)`: Insere produto via `INSERT INTO produtos (...)`.
+  * [x] `find_all_products($termo = '')`: Consulta produtos ordenados por ID decrescente com suporte a busca `LIKE :termo`.
+  * [x] `find_product_by_id($id)`: Retorna os dados de um produto pelo ID via `fetch()`.
+  * [x] `update_product($id, $nome, $descricao, $preco, $quantidade)`: Atualiza produto (aciona a Trigger de auditoria no MySQL).
+  * [x] `delete_product($id)`: Remove produto via `DELETE FROM produtos WHERE id = :id`.
+  * [x] `get_product_history($id = null)`: Consulta o log da tabela `historico_alteracoes` com JOIN em `produtos`.
 
 ---
 
-### 🔹 Fase 5: Interface do Usuário (Views)
-**Diretório alvo**: `view/`
+### ✅ Fase 3: Roteamento Principal (Front Controller)
+**Arquivo**: [`index.php`](file:///c:/Users/Admin/development/php-store/index.php)
 
-* [ ] **`view/listProducts.php`**:
-  * Tabela responsiva com colunas: ID, Nome, Descrição, Preço (formatado em R$), Quantidade e Ações.
-  * Botão de "Novo Produto" apontando para `index.php?action=create`.
-  * Botão de "Editar" direcionando para `index.php?action=edit&id={id}`.
-  * Botão de "Excluir" com confirmação em JavaScript (`confirm(...)`) direcionando para `index.php?action=delete&id={id}`.
-  * Área para exibição de mensagens flash (sucesso/erro).
-* [ ] **`view/addNewProduct.php`**:
-  * Formulário HTML com método `POST` contendo:
-    * Nome (texto, obrigatório)
-    * Descrição (área de texto)
-    * Preço (número com casas decimais, obrigatório)
-    * Quantidade (número inteiro, obrigatório)
-  * Botão de "Salvar" e link de "Voltar".
-* [ ] **`view/editProduct.php`**:
-  * Formulário similar ao de cadastro, porém com campos pré-preenchidos com os valores atuais do produto.
-  * Campo oculto (`<input type="hidden" name="id">`) com o ID do produto.
-* [ ] **`view/history.php`**:
-  * Tabela que exibe as alterações registradas pela Trigger: Data/Hora, Produto, Campo Alterado, Valor Antigo e Valor Novo.
+* [x] `index.php` configurado como ponto único de entrada da aplicação.
+* [x] Captura da ação solicitada via parâmetro `action` (`GET`) e validação de `id`:
+  * [x] `action=home` (padrão): Carrega `controller_home()`.
+  * [x] `action=list`: Carrega `controller_find_all()`.
+  * [x] `action=create`: Carrega `controller_create()`.
+  * [x] `action=edit`: Carrega `controller_edit($id)`.
+  * [x] `action=delete`: Carrega `controller_delete($id)`.
+  * [x] `action=history`: Carrega `controller_history($id)`.
 
 ---
 
-### 🔹 Fase 6: Testes e Validação da Trigger
+### ✅ Fase 4: Lógica de Controle (Controller)
+**Arquivo**: [`controller/productController.php`](file:///c:/Users/Admin/development/php-store/controller/productController.php)
 
-* [ ] **Teste de Inserção**:
-  * Cadastrar produto via interface e checar se aparece na listagem.
-* [ ] **Teste de Atualização (Disparo da Trigger)**:
-  * Alterar apenas o **Preço** de um produto existente.
-  * Acessar a tela de histórico e verificar se apenas uma linha para o campo `preco` foi registrada.
-  * Alterar **Preço** e **Quantidade** simultaneamente e checar se foram criados exatamente 2 registros no histórico.
-* [ ] **Teste de Exclusão**:
-  * Excluir um produto e verificar se o registro foi removido com sucesso (e se o histórico relacionado foi mantido ou excluído conforme regra de integridade).
+* [x] Importação do Model correto ([`model/product.php`](file:///c:/Users/Admin/development/php-store/model/product.php)).
+* [x] Ações implementadas sem acoplamento a sessões:
+  * [x] `controller_home()`: Renderiza a página inicial/dashboard.
+  * [x] `controller_find_all()`: Recebe filtro de busca e renderiza `listProducts.php`.
+  * [x] `controller_create()`: Valida submissão via `POST`, chama `create_product()` e redireciona via JavaScript.
+  * [x] `controller_edit($id)`: Busca os dados atuais do produto via `find_product_by_id($id)`, processa alteração `POST` e redireciona.
+  * [x] `controller_delete($id)`: Executa `delete_product($id)` e redireciona para a listagem.
+  * [x] `controller_history($id)`: Consulta o histórico da Trigger e renderiza `history.php`.
 
 ---
 
-## 🔒 Boas Práticas e Segurança
+### ✅ Fase 5: Interface do Usuário (Views com Bootstrap 5.3)
+**Diretório**: `view/`
 
-* **Prevenção de SQL Injection**: Utilizar exclusivamente *Prepared Statements* com parâmetros nomeados (`:nome`, `:preco`, etc.) em todas as queries.
-* **Prevenção de XSS**: Escapar toda saída de dados vinda do banco ou de entradas do usuário nas views com `htmlspecialchars($valor, ENT_QUOTES, 'UTF-8')`.
-* **Sanitização e Validação**: Validar tipos numéricos (`(float)`, `(int)`) e conferir se strings obrigatórias não estão vazias antes de enviar ao Model.
+* [x] **`view/layout/header.php` & `footer.php`**: Cabeçalho com navbar responsiva, Bootstrap 5.3 CDN, Bootstrap Icons e rodapé padronizado.
+* [x] **`view/home.php`**: Dashboard inicial com cartões de acesso rápido e destaques sobre a Trigger.
+* [x] **`view/listProducts.php`**:
+  * [x] Tabela de listagem com ID, Nome, Descrição, Preço formatado em R$ e estoque com badges dinâmicos.
+  * [x] Campo de pesquisa por nome do produto.
+  * [x] Botões de ação com ícones (Editar e Excluir com `confirm(...)`).
+* [x] **`view/addNewProduct.php`**: Formulário de cadastro com validações HTML5 para Nome, Descrição, Preço e Estoque.
+* [x] **`view/editProduct.php`**: Formulário pré-preenchido com dados existentes, ID oculto e aviso informativo sobre a Trigger.
+* [x] **`view/history.php`**: Tabela de auditoria exibindo data/hora, produto, campo modificado, valor anterior e valor novo gerados pela Trigger.
 
+---
+
+### ⏳ Fase 6: Testes e Validação da Trigger
+
+Roteiro para validação final do sistema:
+
+* [ ] **1. Importação do Banco de Dados**:
+  * Executar o script [`schema.sql`](file:///c:/Users/Admin/development/php-store/schema.sql) no MySQL para criar o banco `estoque_db` (ou ajustar o nome do banco em [`config/database.php`](file:///c:/Users/Admin/development/php-store/config/database.php)).
+* [ ] **2. Iniciar Servidor Local**:
+  ```bash
+  php -S localhost:8000
+  ```
+* [ ] **3. Teste de Inserção (Create)**:
+  * Acessar `http://localhost:8000/index.php?action=create` e cadastrar um produto (ex: Nome: `Mouse Gamer`, Preço: `150.00`, Quantidade: `20`).
+  * Verificar se o produto aparece na listagem (`index.php?action=list`).
+* [ ] **4. Teste de Alteração e Disparo da Trigger (Update)**:
+  * Clicar em "Editar" no produto cadastrado.
+  * Alterar o Preço para `130.00` e a Quantidade para `18` (mantendo nome e descrição inalterados).
+  * Salvar e acessar `index.php?action=history`.
+  * **Verificação**: Confirmar se foram gerados **exatamente dois registros** no histórico (um para `preco` e um para `quantidade`).
+* [ ] **5. Teste de Exclusão (Delete)**:
+  * Clicar em "Excluir" em um produto e confirmar a exclusão.
