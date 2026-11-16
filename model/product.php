@@ -13,9 +13,9 @@ function create_product($nome, $preco, $quantidade) {
     $stmt = $connection->prepare($sql);
   
     $result = $stmt->execute([
-      'nome'        => $nome,
-      'descricao' => $descricao,
-      'preco'       => $preco,
+      'nome'          => $nome,
+      'descricao'     => $descricao,
+      'preco'         => $preco,
       'quantidade'    => $quantidade
     ]);
   
@@ -26,7 +26,7 @@ function create_product($nome, $preco, $quantidade) {
   }
 }
 
-function find_all_products($nome = '') {
+function find_all_products($termo = '') {
   global $connection;
   
   if (!$connection) {
@@ -34,12 +34,13 @@ function find_all_products($nome = '') {
   }
 
   try {
-    $sql = "SELECT* FROM produtos WHERE nome LIKE '%:nome%'";
+    $sql = "SELECT * FROM produtos WHERE nome LIKE :termo ORDER BY id DESC";
     $stmt = $connection->prepare($sql);
-  
+    $search = '%' . $termo . '%';
+ 
     $products = $stmt->execute([
-      'nome' => $nome
-    ]);
+      'termo' => search;
+  ]);
   
     return $products;
 
@@ -69,7 +70,7 @@ function find_product_by_id($id) {
   }
 }
 
-function update_product($id, $nome, $preco, $quantidade) {
+function update_product($id, $nome, $descricao, $preco, $quantidade) {
   global $connection;
 
   if (!$connection) {
@@ -79,13 +80,14 @@ function update_product($id, $nome, $preco, $quantidade) {
   try {
     find_product_by_id($id);
 
-    $sql = "UPDATE produtos SET nome = :nome, preco = :preco, quantidade = :quantidade WHERE id = : id";
+    $sql = "UPDATE produtos SET nome = :nome, descricao = :descricao, preco = :preco, quantidade = :quantidade WHERE id = : id";
     $stmt = $connection->prepare($sql);
 
     $result = $stmt->execute([
-      'id'      => $id,
-      'nome'    => $nome,
-      'preco'   => $preco,
+      'id'          => $id,
+      'nome'        => $nome,
+      'descrao'     => $descricao,
+      'preco'       => $preco,
       'quantidade'  => $quantidade,
     ]);
 
@@ -104,7 +106,7 @@ function delete_product($id) {
   }
 
   try {
-    $sql = "DELETE * FROM produtos WHERE id = :id";
+    $sql = "DELETE FROM produtos WHERE id = :id";
     $stmt = $connection->prepare($sql);
 
     $result = $stmt->execute([
@@ -112,5 +114,28 @@ function delete_product($id) {
     ]);
   } catch (PDOException $e) {
     return false;
+  }
+}
+
+function get_product_history($id = null) {
+  global $connection;
+
+  if (!$connection) {
+    return [];
+  }
+
+  try {
+    find_product_by_id($id);
+
+    $sql = "SELECT * FROM historico_alteracoes WHERE id_produto = :id";
+    $stmt = $connection->prepare($sql);
+    
+    $result = $stmt->execute([
+      'id' => $id
+    ]);
+
+    return $result;
+  } catch (PDOException $e) {
+    return [];
   }
 }
