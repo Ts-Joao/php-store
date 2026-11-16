@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . "/../config/database.php";
 
-function create_product($name, $price, $amount) {
+function create_product($nome, $preco, $quantidade) {
   global $connection;
 
   if (!$connection) {
@@ -9,14 +9,14 @@ function create_product($name, $price, $amount) {
   }
 
   try {
-    $sql = "INSERT INTO products (name, description, price, quantity) VALUES (:name, :description, :price, :quantity)";
+    $sql = "INSERT INTO produtos (nome, descricao, preco, quantidade) VALUES (:nome, :descricao, :preco, :quantidade)";
     $stmt = $connection->prepare($sql);
   
     $result = $stmt->execute([
-      'name'        => $name,
-      'description' => $description,
-      'price'       => $price,
-      'quantity'    => $quantity
+      'nome'        => $nome,
+      'descricao' => $descricao,
+      'preco'       => $preco,
+      'quantidade'    => $quantidade
     ]);
   
     return $result;
@@ -26,7 +26,7 @@ function create_product($name, $price, $amount) {
   }
 }
 
-function find_all_products($name = '') {
+function find_all_products($nome = '') {
   global $connection;
   
   if (!$connection) {
@@ -34,11 +34,11 @@ function find_all_products($name = '') {
   }
 
   try {
-    $sql = "SELECT* FROM products WHERE name LIKE '%:name%'";
+    $sql = "SELECT* FROM produtos WHERE nome LIKE '%:nome%'";
     $stmt = $connection->prepare($sql);
   
     $products = $stmt->execute([
-      'name' => $name
+      'nome' => $nome
     ]);
   
     return $products;
@@ -56,7 +56,7 @@ function find_product_by_id($id) {
   }
 
   try {
-    $sql = "SELECT * FROM products WHERE id = :id";
+    $sql = "SELECT * FROM produtos WHERE id = :id";
     $stmt = $connection->prepare($sql);
     $result = $stmt->execute([
       'id' => $id
@@ -69,7 +69,7 @@ function find_product_by_id($id) {
   }
 }
 
-function update_product($id, $name, $price, $amount) {
+function update_product($id, $nome, $preco, $quantidade) {
   global $connection;
 
   if (!$connection) {
@@ -79,14 +79,14 @@ function update_product($id, $name, $price, $amount) {
   try {
     find_product_by_id($id);
 
-    $sql = "UPDATE products SET name = :name, price = :price, amount = :amount WHERE id = : id";
+    $sql = "UPDATE produtos SET nome = :nome, preco = :preco, quantidade = :quantidade WHERE id = : id";
     $stmt = $connection->prepare($sql);
 
     $result = $stmt->execute([
       'id'      => $id,
-      'name'    => $name,
-      'price'   => $price,
-      'amount'  => $amount,
+      'nome'    => $nome,
+      'preco'   => $preco,
+      'quantidade'  => $quantidade,
     ]);
 
     return $result;
@@ -104,7 +104,7 @@ function delete_product($id) {
   }
 
   try {
-    $sql = "DELETE * FROM products WHERE id = :id";
+    $sql = "DELETE * FROM produtos WHERE id = :id";
     $stmt = $connection->prepare($sql);
 
     $result = $stmt->execute([
