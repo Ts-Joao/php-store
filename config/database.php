@@ -2,7 +2,7 @@
 $server = 'localhost';
 $user = 'root';
 $password = '';
-$db = 'crud';
+$db = 'estoque_db';
 
 $dsn = "mysql:host=$server;dbname=$db;charset=utf8mb4";
 

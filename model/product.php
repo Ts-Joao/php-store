@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . "/../config/database.php";
 
-function create_product($nome, $preco, $quantidade) {
+function create_product($nome, $descricao, $preco, $quantidade) {
   global $connection;
 
   if (!$connection) {
